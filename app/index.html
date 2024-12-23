@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Map</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <form id="myForm">
+                <div class="form-row">
+                    <label for="question">Select Map:</label>
+                    <select id="question" name="question">
+                        <option value="" disabled selected>Choose an option</option>
+                        <option value="find_avg_events_by_country">Find avg events by country</option>
+                        <option value="find_events_by_country_and_year">Find events by country and year</option>
+                        <option value="find_events_by_activty_group_and_country">Find events by activity group and country</option>
+                        <option value="find_events_by_activty_group_and_spesific_country">Find events by activity group and specific country</option>
+                        <option value="find_group_with_same_targets">Find events by activity group and specific country (select region or country)</option>
+                        <option value="find_countries_with_same_kind">Find countries with same kind (select region or country)</option>
+                        <option value="find_region_with_high_activity_group">Find region with high activity group (select region or country)</option>
+                        <option value="search_by_keywords">Search by keywords (fill the keywords in the input)</option>
+                        <option value="search_by_keywords_in_news">Search by keywords in news</option>
+                        <option value="search_by_keywords_in_historic">Search by keywords in historic</option>
+                        <option value="search_by_keywords_combined">Search by keywords combined</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <label style="margin: 10px;">Top 5:</label>
+                    <label for="top5-yes">Yes</label>
+                    <input type="radio" id="top5-yes" name="top5" value="true">
+                    <label for="top5-no">No</label>
+                    <input type="radio" id="top5-no" name="top5" value="false">
+                </div>
+                <div class="form-row">
+                    <label style="margin: 10px;">Region or Country:</label>
+                    <label for="country">Country</label>
+                    <input type="radio" id="country" name="region_or_country" value="country">
+                    <label for="region">Region</label>
+                    <input type="radio" id="region" name="region_or_country" value="region">
+                </div>
+                <div class="form-row">
+                    <label for="country-name">Country Name:</label>
+                    <input type="text" id="country-name" name="country_name" placeholder="Enter country name">
+                </div>
+                <div class="form-row">
+                    <label for="limit">Limit:</label>
+                    <input type="number" id="limit">
+                </div>
+                <button type="button" onclick="submitForm()">Send</button>
+            </form>
+        </div>
+        <div class="map" id="map"></div>
+    </div>
+</body>
+    <script src="index.js" defer></script>
+</html>
