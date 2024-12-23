@@ -1,4 +1,6 @@
 
+
+
 const urls = {
     "find_avg_events_by_country": "http://localhost:5000/api/avg_casualties_country/",
     "find_avg_events_by_country_top5": "http://localhost:5000/api/avg_casualties_country/",
