@@ -28,33 +28,15 @@
                         <option value="search_by_keywords_combined">Search by keywords combined</option>
                     </select>
                 </div>
-                <div class="form-row">
-                    <label style="margin: 10px;">Top 5:</label>
-                    <label for="top5-yes">Yes</label>
-                    <input type="radio" id="top5-yes" name="top5" value="true">
-                    <label for="top5-no">No</label>
-                    <input type="radio" id="top5-no" name="top5" value="false">
-                </div>
-                <div class="form-row">
-                    <label style="margin: 10px;">Region or Country:</label>
-                    <label for="country">Country</label>
-                    <input type="radio" id="country" name="region_or_country" value="country">
-                    <label for="region">Region</label>
-                    <input type="radio" id="region" name="region_or_country" value="region">
-                </div>
-                <div class="form-row">
-                    <label for="country-name">Country Name:</label>
-                    <input type="text" id="country-name" name="country_name" placeholder="Enter country name">
-                </div>
-                <div class="form-row">
-                    <label for="limit">Limit:</label>
-                    <input type="number" id="limit">
-                </div>
+                <div id="inputFromScript">
+
+                </div>                
+                
                 <button type="button" onclick="submitForm()">Send</button>
             </form>
         </div>
         <div class="map" id="map"></div>
     </div>
 </body>
-    <script src="index.js" defer></script>
+    <script type="module" src="index.js"></script>
 </html>

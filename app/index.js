@@ -1,84 +1,80 @@
+import { inputSearchHtml, limitHtml, regionOrCountryHtml, startAndEndDates, top5Html } from "./componnent.js";
+import { countryCondition, descriptionCountry, descriptionSearch, elastic, regionOrCountryCondition, top5Condition, urls } from "./data.js";
+import { fetchData } from "./service_api.js";
 
-const urls = {
-    "find_avg_events_by_country": "http://localhost:5000/api/avg_casualties_country/",
-    "find_avg_events_by_country_top5": "http://localhost:5000/api/avg_casualties_country/",
-    "find_events_by_country_and_year": "http://localhost:5000/api/avg_casualties_country/year/",
-    "find_events_by_activty_group_and_country": "http://localhost:5000/api/group_casualties/activity_group/",
-    "find_events_by_activty_group_and_spesific_country": "http://localhost:5000/api/group_casualties/activity_group/",
-    "find_group_with_same_targets":"http://localhost:5000/api/group_target/group_with_same_targets/",
-    "find_countries_with_same_kind" : "http://localhost:5000/api/group_target/countries_with_same_kind/",
-    "find_region_with_high_activity_group" : "http://localhost:5000/api/group_target/region_with_high_activity_group/",
-    "find_events_by_attack_type":"http://localhost:5000/api/event_attack_type/",
-    "search_by_keywords": "http://localhost:5000/api/search/keywords/",
-    "search_by_keywords_in_news": "http://localhost:5000/api/search/news/",
-    "search_by_keywords_in_historic":"http://localhost:5000/api/search/historic/",  
-    "search_by_keywords_combined":"http://localhost:5000/api/search/combined/"
-};
 
-const elastic = ["search_by_keywords", "search_by_keywords_in_news", "search_by_keywords_in_historic", "search_by_keywords_combined"]
+const inputFromScript = document.getElementById("inputFromScript")
+const selectedQuestion = document.getElementById('question');
 
-const fetchData = async (url,method="GET",body) => {
-    try {
-        const response = await fetch(url, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json"
-            }
-        });
+selectedQuestion.addEventListener("change", (e) => {
+    console.log("Change event triggered", e.target.value);
+});
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
 
-        const data = await response.json();
-        return data;
-    } catch (error) {
-        console.error("Error fetching data:", error);
-        return null;
+selectedQuestion.addEventListener("change", (e) => {
+    inputFromScript.innerHTML = ""; // Corrected the syntax for clearing content
+    const value = e.target.value; // Ensuring we get the correct value from the event
+
+    if (elastic.includes(value) && value != "search_by_keywords_combined") {
+        inputFromScript.innerHTML = `${inputSearchHtml("Search any words", descriptionSearch)}${limitHtml()}`;
+    } else if (value === "search_by_keywords_combined") {
+        inputFromScript.innerHTML = `${inputSearchHtml("Search any words", descriptionSearch)}${limitHtml()}${startAndEndDates()}`;
+    } else if (top5Condition.includes(value)) {
+        inputFromScript.innerHTML = `${top5Html()}`;
+    } else if (regionOrCountryCondition.includes(value)) {
+        inputFromScript.innerHTML = `${regionOrCountryHtml()}`;
+    } else if (countryCondition.includes(value)) {
+        inputFromScript.innerHTML = `${inputSearchHtml("Search any country", descriptionCountry)}`;
     }
-};
+});
 
 async function submitForm() {
-    const selectedQuestion = document.getElementById('question').value;
+    const startDateValue = document.getElementById("startDateValue").value;
+    const endDateValue = document.getElementById("endDateValue").value;
+    const selectedQuestionValue = selectedQuestion.value
     const top5 = document.querySelector('input[name="top5"]:checked');
     const regionOrCountry = document.querySelector('input[name="region_or_country"]:checked');
     const countryName = document.getElementById('country-name').value.trim();
     const limit = document.getElementById('limit').value;
 
+
     const top5Value = top5 ? top5.value === "true" : false;
     const regionOrCountryValue = regionOrCountry ? regionOrCountry.value : null;
 
-    console.log('Selected Question:', selectedQuestion);
+    console.log('Selected Question:', selectedQuestionValue);
     console.log('Top 5:', top5Value);
-    console.log('Region or Country:', regionOrCountryValue);
+    console.log('Region or Country:', selectedQuestionValue);
     console.log('Country Name:', countryName);
 
     const mapArea = document.getElementById("map");
 
-    let url = urls[selectedQuestion];
+    let url = urls[selectedQuestionValue];
 
     console.log(url);
-    
 
-    if (!elastic.includes(selectedQuestion)) {
+
+    if (!elastic.includes(selectedQuestionValue)) {
         if (top5Value) {
             url += "top-5/"
         } else if (regionOrCountryValue === "country") {
             url += "1/"
-        } else if  (regionOrCountryValue === "region"){
+        } else if (regionOrCountryValue === "region") {
             url += "2/"
         } else if (countryName) {
             url += `${countryName}/`
-        }}
+        }
+    }
     else {
+        const dates = startDateValue && endDateValue ? `${startDateValue},${endDateValue}` : '';
         url += `${countryName}/${limit || 10}/`;
-    }    
+        url = startDateValue ? `${url}_${dates}` : url
+    }
 
     mapArea.innerHTML = `<h1>loading data....</h1>`;
 
     console.log(countryName);
-    
-    console.log({"00000000000":url});
+
+    console.log({ "00000000000": url });
 
     // Fetch data and update map area
     const responseData = await fetchData(url);
@@ -102,13 +98,19 @@ button.addEventListener("mouseleave", () => {
 
 // Real-time input validation for 'limit' field
 const limitInput = document.getElementById("limit");
-limitInput.addEventListener("input", () => {
-    if (isNaN(limitInput.value) || limitInput.value.trim() === "") {
-        limitInput.style.borderColor = "red";
-    } else {
-        limitInput.style.borderColor = "green";
-    }
-});
+
+// Check if the element exists before adding the event listener
+if (limitInput) {
+    limitInput.addEventListener("input", () => {
+        if (isNaN(limitInput.value) || limitInput.value.trim() === "") {
+            limitInput.style.borderColor = "red";
+        } else {
+            limitInput.style.borderColor = "green";
+        }
+    });
+} else {
+    console.warn('Element with ID "limit" does not exist.');
+}
 
 // Shimmer effect for map
 const map = document.getElementById("map");
@@ -140,3 +142,9 @@ themeToggle.addEventListener("click", () => {
     }
 });
 header.appendChild(themeToggle);
+
+
+
+
+
+
